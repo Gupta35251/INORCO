@@ -18,7 +18,7 @@ def clean_text(text):
 
 
 parent_directory = os.path.dirname(os.path.abspath(__file__))
-embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2", model_kwargs={"device": "cuda"})
+embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2", model_kwargs={"device": "cpu"})
 docs_dir = f"{parent_directory}/web_data"
 vector_db_path = f"{parent_directory}/vector_db"
 loader = DirectoryLoader(docs_dir,glob = "**/*.md",loader_cls = UnstructuredFileLoader)
