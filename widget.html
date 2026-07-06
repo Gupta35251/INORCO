@@ -1,0 +1,151 @@
+<style>
+  #inorco-chat-button {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #0b5ed7;
+    color: white;
+    border: none;
+    font-size: 26px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    z-index: 9999;
+  }
+
+  #inorco-chat-window {
+    position: fixed;
+    bottom: 96px;
+    right: 24px;
+    width: 320px;
+    max-height: 440px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.25);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 9999;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  #inorco-chat-header {
+    background: #0b5ed7;
+    color: white;
+    padding: 12px 16px;
+    font-weight: bold;
+  }
+
+  #inorco-chat-messages {
+    flex: 1;
+    padding: 12px;
+    overflow-y: auto;
+    font-size: 14px;
+    max-height: 300px;
+  }
+
+  .inorco-msg {
+    margin-bottom: 10px;
+    line-height: 1.4;
+  }
+
+  .inorco-msg.user {
+    text-align: right;
+    color: #0b5ed7;
+  }
+
+  .inorco-msg.bot {
+    text-align: left;
+    color: #222;
+  }
+
+  #inorco-chat-input-row {
+    display: flex;
+    border-top: 1px solid #eee;
+  }
+
+  #inorco-chat-input {
+    flex: 1;
+    border: none;
+    padding: 10px;
+    font-size: 14px;
+    outline: none;
+  }
+
+  #inorco-chat-send {
+    border: none;
+    background: #0b5ed7;
+    color: white;
+    padding: 0 16px;
+    cursor: pointer;
+  }
+</style>
+
+<button id="inorco-chat-button" onclick="inorcoToggleChat()">💬</button>
+
+<div id="inorco-chat-window">
+  <div id="inorco-chat-header">INORCO Assistant</div>
+  <div id="inorco-chat-messages">
+    <div class="inorco-msg bot">Hi! Ask me anything about INORCO's products, solvents, or paints.</div>
+  </div>
+  <div id="inorco-chat-input-row">
+    <input id="inorco-chat-input" type="text" placeholder="Type your question..." onkeydown="if(event.key==='Enter') inorcoSendMessage()">
+    <button id="inorco-chat-send" onclick="inorcoSendMessage()">Send</button>
+  </div>
+</div>
+
+<script>
+  // ----- CONFIGURE THIS -----
+  const API_URL = "https://inorco-1.onrender.com/chat"; // <-- replace with your real deployed URL
+  // --------------------------
+
+  function inorcoToggleChat() {
+    const win = document.getElementById("inorco-chat-window");
+    win.style.display = (win.style.display === "flex") ? "none" : "flex";
+  }
+
+  function inorcoAddMessage(text, sender) {
+    const messages = document.getElementById("inorco-chat-messages");
+    const div = document.createElement("div");
+    div.className = "inorco-msg " + sender;
+    div.textContent = text;
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  async function inorcoSendMessage() {
+    const input = document.getElementById("inorco-chat-input");
+    const question = input.value.trim();
+    if (!question) return;
+
+    inorcoAddMessage(question, "user");
+    input.value = "";
+    inorcoAddMessage("Typing...", "bot");
+
+    try {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question })
+      });
+
+      const data = await response.json();
+
+      // Remove the "Typing..." placeholder
+      const messages = document.getElementById("inorco-chat-messages");
+      messages.removeChild(messages.lastChild);
+
+      if (response.ok) {
+        inorcoAddMessage(data.answer, "bot");
+      } else {
+        inorcoAddMessage("Sorry, something went wrong. Please try again.", "bot");
+      }
+    } catch (err) {
+      const messages = document.getElementById("inorco-chat-messages");
+      messages.removeChild(messages.lastChild);
+      inorcoAddMessage("Network error. Please check your connection.", "bot");
+    }
+  }
+</script>

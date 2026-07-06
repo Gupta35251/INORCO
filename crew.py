@@ -8,4 +8,4 @@ crew = Crew(
     verbose = True
 )
 
-print(crew.kickoff({"question":"What is the packging size of Ethyl acetate and alo tell its purity?"}))
+# print(crew.kickoff({"question":"What is the packging size of Ethyl acetate and alo tell its purity?"}))
