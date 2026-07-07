@@ -34,9 +34,10 @@ app = FastAPI(title="INORCO Chatbot API")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://www.inorco.in",
-        "https://inorco.in",
-        "http://localhost:3000",   # optional: for local widget testing
+        # "https://www.inorco.in",
+        # "https://inorco.in",
+        # "http://localhost:3000",   # optional: for local widget testing
+        "*"
     ],
     allow_credentials=True,
     allow_methods=["POST", "GET"],
