@@ -12,7 +12,7 @@ load_dotenv()
 # print("Loading embedding model",flush = True)
 embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2", model_kwargs={"device": "cpu"})
 
-parent_directory = os.path.dirname(os.path.abspath(__file__))
+# parent_directory = os.path.dirname(os.path.abspath(__file__))
 
 # print("Loading Vector DB Path",flush = True)
 parent_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -79,5 +79,4 @@ def rag_query_tool(query:str)->str:
 
 # if __name__ == '__main__':
 #     print(rag_query_tool.run(query = "How many organic solvents in the inorco company.Give name of all of them"))
-
 
